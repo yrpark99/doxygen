@@ -138,7 +138,9 @@ enum CommandType
   CMD_SNIPPETDOC   = 108,
   CMD_SNIPWITHLINES= 109,
   CMD_EMOJI        = 110,
-  CMD_EQUAL        = 111
+  CMD_EQUAL        = 111,
+  CMD_STARTMINDMAP = 112,
+  CMD_ENDMINDMAP   = 113,
 };
 
 enum HtmlTagType

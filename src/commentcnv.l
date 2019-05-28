@@ -460,11 +460,15 @@ void replaceComment(int offset);
 				     g_blockName=&yytext[1];
                                      BEGIN(VerbatimCode);
   				   }
-<CComment,ReadLine>[\\@]("dot"|"code"|"msc"|"startuml")/[^a-z_A-Z0-9] { /* start of a verbatim block */
+<CComment,ReadLine>[\\@]("dot"|"code"|"msc"|"startuml"|"startmindmap")/[^a-z_A-Z0-9] { /* start of a verbatim block */
                                      copyToOutput(yytext,(int)yyleng); 
 				     g_lastCommentContext = YY_START;
 				     g_javaBlock=0;
                                      if (qstrcmp(&yytext[1],"startuml")==0)
+                                     {
+                                       g_blockName="uml";
+                                     }
+                                     else if (qstrcmp(&yytext[1],"startmindmap")==0)
                                      {
                                        g_blockName="uml";
                                      }
@@ -538,7 +542,7 @@ void replaceComment(int offset);
 				       }
 				     }
   				   }
-<VerbatimCode>[\\@]("enddot"|"endcode"|"endmsc"|"enduml") { /* end of verbatim block */
+<VerbatimCode>[\\@]("enddot"|"endcode"|"endmsc"|"enduml"|"endmindmap") { /* end of verbatim block */
                                      copyToOutput(yytext,(int)yyleng);
 				     if (&yytext[4]==g_blockName)
 				     {

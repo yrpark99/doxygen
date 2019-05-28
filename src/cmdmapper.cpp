@@ -149,6 +149,8 @@ CommandMap cmdMap[] =
   { "---",           CMD_MDASH },
   { "_setscope",     CMD_SETSCOPE },
   { "emoji",         CMD_EMOJI },
+  { "startmindmap",  CMD_STARTMINDMAP },
+  { "endmindmap",    CMD_ENDMINDMAP },
   { 0,               0 },
 };
 

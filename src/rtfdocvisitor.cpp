@@ -390,6 +390,16 @@ void RTFDocVisitor::visit(DocVerbatim *s)
         includePicturePostRTF(true, s->hasCaption());
       }
       break;
+    case DocVerbatim::PlantUMLMindmap:
+      {
+        static QCString rtfOutput = Config_getString(RTF_OUTPUT);
+        QCString baseName = PlantumlManager::instance()->writePlantUMLMindmapSource(rtfOutput,s->exampleFile(),s->text(),PlantumlManager::PUML_BITMAP);
+
+        writePlantUMLFile(baseName, s->hasCaption());
+        visitCaption(this, s->children());
+        includePicturePostRTF(true, s->hasCaption());
+      }
+      break;
   }
   m_lastIsPara=FALSE;
 }

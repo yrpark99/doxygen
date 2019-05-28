@@ -433,6 +433,14 @@ void LatexDocVisitor::visit(DocVerbatim *s)
         writePlantUMLFile(baseName, s);
       }
       break;
+    case DocVerbatim::PlantUMLMindmap:
+      {
+        QCString latexOutput = Config_getString(LATEX_OUTPUT);
+        QCString baseName = PlantumlManager::instance()->writePlantUMLMindmapSource(latexOutput,s->exampleFile(),s->text(),PlantumlManager::PUML_EPS);
+
+        writePlantUMLFile(baseName, s);
+      }
+      break;
   }
 }
 

@@ -365,6 +365,21 @@ DB_VIS_C
         m_t << "</para>" << endl;
       }
       break;
+    case DocVerbatim::PlantUMLMindmap:
+      {
+        static QCString docbookOutput = Config_getString(DOCBOOK_OUTPUT);
+        QCString baseName = PlantumlManager::instance()->writePlantUMLMindmapSource(docbookOutput,s->exampleFile(),s->text(),PlantumlManager::PUML_BITMAP);
+        QCString shortName = baseName;
+        int i;
+        if ((i=shortName.findRev('/'))!=-1)
+        {
+          shortName=shortName.right(shortName.length()-i-1);
+        }
+        m_t << "<para>" << endl;
+        writePlantUMLFile(baseName,s);
+        m_t << "</para>" << endl;
+      }
+      break;
   }
 }
 

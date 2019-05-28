@@ -225,6 +225,10 @@ static QCString isBlockCommand(const char *data,int offset,int size)
   {
     return "enduml";
   }
+  else if (blockName=="startmindmap")
+  {
+    return "endmindmap";
+  }
   else if (blockName=="f" && end<size)
   {
     if (data[end]=='$')

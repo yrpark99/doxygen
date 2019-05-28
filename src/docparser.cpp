@@ -5685,6 +5685,35 @@ int DocPara::handleCommand(const QCString &cmdName, const int tok)
         doctokenizerYYsetStatePara();
       }
       break;
+    case CMD_STARTMINDMAP:
+      {
+        static QCString jarPath = Config_getString(PLANTUML_JAR_PATH);
+        doctokenizerYYsetStatePlantUMLOpt();
+        retval = doctokenizerYYlex();
+        QCString plantFile(g_token->sectionId);
+        DocVerbatim *dv = new DocVerbatim(this,g_context,g_token->verb,DocVerbatim::PlantUMLMindmap,FALSE,plantFile);
+        doctokenizerYYsetStatePara();
+        QCString width,height;
+        defaultHandleTitleAndSize(CMD_STARTMINDMAP,dv,dv->children(),width,height);
+        doctokenizerYYsetStatePlantUML();
+        retval = doctokenizerYYlex();
+        int line=0;
+        dv->setText(stripLeadingAndTrailingEmptyLines(g_token->verb,line));
+        dv->setWidth(width);
+        dv->setHeight(height);
+        if (jarPath.isEmpty())
+        {
+          warn_doc_error(g_fileName,doctokenizerYYlineno,"ignoring \\startmindmap command because PLANTUML_JAR_PATH is not set");
+          delete dv;
+        }
+        else
+        {
+          m_children.append(dv);
+        }
+        if (retval==0) warn_doc_error(g_fileName,doctokenizerYYlineno,"startmindmap section ended without end marker");
+        doctokenizerYYsetStatePara();
+      }
+      break;
     case CMD_ENDPARBLOCK:
       retval=RetVal_EndParBlock;
       break;
@@ -5700,6 +5729,7 @@ int DocPara::handleCommand(const QCString &cmdName, const int tok)
     case CMD_ENDDOT:
     case CMD_ENDMSC:
     case CMD_ENDUML:
+    case CMD_ENDMINDMAP:
       warn_doc_error(g_fileName,doctokenizerYYlineno,"unexpected command %s",qPrint(g_token->name));
       break; 
     case CMD_PARAM:
@@ -7229,6 +7259,7 @@ static uint isVerbatimSection(const char *data,uint i,uint len,QCString &endMark
     CHECK_FOR_COMMAND("manonly",endMarker="endmanonly");
     CHECK_FOR_COMMAND("docbookonly",endMarker="enddocbookonly");
     CHECK_FOR_COMMAND("startuml",endMarker="enduml");
+    CHECK_FOR_COMMAND("startmindmap",endMarker="endmindmap");
   }
   //printf("isVerbatimSection(%s)=%d)\n",QCString(&data[i]).left(10).data(),j);
   return j;

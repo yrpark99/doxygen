@@ -203,6 +203,7 @@ static DocCmdMap docCmdMap[] =
   { "dot",             &handleFormatBlock,      TRUE  },
   { "msc",             &handleFormatBlock,      TRUE  },
   { "startuml",        &handleFormatBlock,      TRUE  },
+  { "startmindmap",    &handleFormatBlock,      TRUE  },
   { "code",            &handleFormatBlock,      TRUE  },
   { "addindex",        &handleAddIndex,         FALSE },
   { "if",              &handleIf,               FALSE },
@@ -913,7 +914,7 @@ static int yyread(char *buf,int max_size)
        /* start command character */
 CMD	  ("\\"|"@")
 DCMD1     ("arg"|"attention"|"author"|"cite"|"code")
-DCMD2     ("date"|"dot"|"msc"|"dotfile"|"example"|"startuml")
+DCMD2     ("date"|"dot"|"msc"|"dotfile"|"example"|"startuml"|"startmindmap")
 DCMD3     ("htmlinclude"|"htmlonly"|"image"|"include")
 DCMD4     ("includelineno"|"internal"|"invariant")
 DCMD5     ("latexinclude"|"latexonly"|"li"|"line"|"manonly"|"name")
@@ -1887,6 +1888,13 @@ RCSTAG    "$"{ID}":"[^\n$]+"$"
   					    BEGIN(Comment);
 					  }
                                         }
+<FormatBlock>{CMD}"endmindmap"              {
+  					  addOutput(yytext);
+					  if (blockName=="startmindmap") // found end of the block
+					  {
+  					    BEGIN(Comment);
+					  }
+                                        }
 <FormatBlock>[^ \@\*\/\\\n]*		{ // some word
   					  addOutput(yytext);
   					}
@@ -1913,6 +1921,7 @@ RCSTAG    "$"{ID}":"[^\n$]+"$"
 <FormatBlock><<EOF>>			{
                                           QCString endTag = "end"+blockName;
                                           if (blockName=="startuml") endTag="enduml";
+                                          if (blockName=="startmindmap") endTag="endmindmap";
                                           warn(yyFileName,yyLineNr,
 	                                    "reached end of comment while inside a \\%s block; check for missing \\%s tag!",
 	                                    blockName.data(),endTag.data()

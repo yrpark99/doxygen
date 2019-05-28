@@ -910,6 +910,9 @@ REFWORD_NOCV   {FILEMASK}|{LABELID}|{REFWORD2_NOCV}|{REFWORD3}|{REFWORD4_NOCV}
 <St_PlantUML>{CMD}"enduml"  {
                          return RetVal_OK;
                        }
+<St_PlantUML>{CMD}"endmindmap"  {
+                         return RetVal_OK;
+                       }
 <St_PlantUML>[^\\@\n]+ |
 <St_PlantUML>\n        |
 <St_PlantUML>.         { /* plantuml text */
@@ -1280,6 +1283,10 @@ REFWORD_NOCV   {FILEMASK}|{LABELID}|{REFWORD2_NOCV}|{REFWORD3}|{REFWORD4_NOCV}
   				    }
 <St_Sections>{CMD}"startuml"/[^a-z_A-Z0-9] {
                                       g_endMarker="enduml";
+				      BEGIN(St_SecSkip);
+  				    }
+<St_Sections>{CMD}"startmindmap"/[^a-z_A-Z0-9] {
+                                      g_endMarker="endmindmap";
 				      BEGIN(St_SecSkip);
   				    }
 <St_Sections>{CMD}"htmlonly"/[^a-z_A-Z0-9] {

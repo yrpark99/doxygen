@@ -46,6 +46,15 @@ class PlantumlManager
      */
     QCString writePlantUMLSource(const QCString &outDir,const QCString &fileName,const QCString &content, OutputFormat format);
 
+    /** Write a PlantUML Maindmap compatible file.
+     *  @param[in] outDir   the output directory to write the file to.
+     *  @param[in] fileName the name of the file. If empty a name will be chosen automatically.
+     *  @param[in] content  the contents of the PlantUML file.
+     *  @param[in] format   the image format to generate.
+     *  @returns The name of the generated file.
+     */
+    QCString writePlantUMLMindmapSource(const QCString &outDir,const QCString &fileName,const QCString &content, OutputFormat format);
+
     /** Convert a PlantUML file to an image.
      *  @param[in] baseName the name of the generated file (as returned by writePlantUMLSource())
      *  @param[in] outDir   the directory to write the resulting image into.

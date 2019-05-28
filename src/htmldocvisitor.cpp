@@ -636,6 +636,26 @@ void HtmlDocVisitor::visit(DocVerbatim *s)
         forceStartParagraph(s);
       }
       break;
+    case DocVerbatim::PlantUMLMindmap:
+      {
+        forceEndParagraph(s);
+        static QCString htmlOutput = Config_getString(HTML_OUTPUT);
+        QCString imgExt = getDotImageExtension();
+        PlantumlManager::OutputFormat format = PlantumlManager::PUML_BITMAP;	// default : PUML_BITMAP
+        if (imgExt=="svg")
+        {
+          format = PlantumlManager::PUML_SVG;
+        }
+        QCString baseName = PlantumlManager::instance()->writePlantUMLMindmapSource(htmlOutput,s->exampleFile(),s->text(),format);
+        m_t << "<div class=\"plantumlgraph\">" << endl;
+        writePlantUMLFile(baseName,s->relPath(),s->context());
+        visitPreCaption(m_t, s);
+        visitCaption(this, s->children());
+        visitPostCaption(m_t, s);
+        m_t << "</div>" << endl;
+        forceStartParagraph(s);
+      }
+      break;
   }
 }
 

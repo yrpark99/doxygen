@@ -26,13 +26,13 @@
 #include <qdict.h>
 #include <qlist.h>
 
+static int umlindex=1;
 
 QCString PlantumlManager::writePlantUMLSource(const QCString &outDir,const QCString &fileName,const QCString &content,OutputFormat format)
 {
   QCString baseName;
   QCString puName;
   QCString imgName;
-  static int umlindex=1;
 
   Debug::print(Debug::Plantuml,0,"*** %s fileName: %s\n","writePlantUMLSource",qPrint(fileName));
   Debug::print(Debug::Plantuml,0,"*** %s outDir: %s\n","writePlantUMLSource",qPrint(outDir));
@@ -71,6 +71,60 @@ QCString PlantumlManager::writePlantUMLSource(const QCString &outDir,const QCStr
   QCString text = "@startuml "+imgName+"\n";
   text+=content;
   text+="\n@enduml\n";
+
+  QCString qcOutDir(outDir);
+  uint pos = qcOutDir.findRev("/");
+  QCString generateType(qcOutDir.right(qcOutDir.length() - (pos + 1)) );
+  Debug::print(Debug::Plantuml,0,"*** %s generateType: %s\n","writePlantUMLSource",qPrint(generateType));
+  PlantumlManager::instance()->insert(generateType,puName,format,text);
+  Debug::print(Debug::Plantuml,0,"*** %s generateType: %s\n","writePlantUMLSource",qPrint(generateType));
+
+  return baseName;
+}
+
+QCString PlantumlManager::writePlantUMLMindmapSource(const QCString &outDir,const QCString &fileName,const QCString &content,OutputFormat format)
+{
+  QCString baseName;
+  QCString puName;
+  QCString imgName;
+
+  Debug::print(Debug::Plantuml,0,"*** %s fileName: %s\n","writePlantUMLSource",qPrint(fileName));
+  Debug::print(Debug::Plantuml,0,"*** %s outDir: %s\n","writePlantUMLSource",qPrint(outDir));
+
+  if (fileName.isEmpty()) // generate name
+  {
+    puName = "inline_umlgraph_"+QCString().setNum(umlindex);
+    baseName = outDir+"/inline_umlgraph_"+QCString().setNum(umlindex++);
+  }
+  else // user specified name
+  {
+    baseName = fileName;
+    int i=baseName.findRev('.');
+    if (i!=-1) baseName = baseName.left(i);
+    puName = baseName;
+    baseName.prepend(outDir+"/");
+  }
+
+  switch (format)
+  {
+    case PUML_BITMAP:
+      imgName =puName+".png";
+      break;
+    case PUML_EPS:
+      imgName =puName+".eps";
+      break;
+    case PUML_SVG:
+      imgName =puName+".svg";
+      break;
+  }
+
+  Debug::print(Debug::Plantuml,0,"*** %s baseName: %s\n","writePlantUMLSource",qPrint(baseName));
+  Debug::print(Debug::Plantuml,0,"*** %s puName: %s\n","writePlantUMLSource",qPrint(puName));
+  Debug::print(Debug::Plantuml,0,"*** %s imgName: %s\n","writePlantUMLSource",qPrint(imgName));
+
+  QCString text = "@startmindmap "+imgName+"\n";
+  text+=content;
+  text+="\n@endmindmap\n";
 
   QCString qcOutDir(outDir);
   uint pos = qcOutDir.findRev("/");
